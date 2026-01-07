@@ -1,0 +1,106 @@
+/* 注入页面的主容器 */
+#intervals-ai-root {
+  position: fixed;
+  top: 100px; /* 距离顶部的位置 */
+  right: 20px;
+  width: 40px; /* 默认收起宽度 */
+  height: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border: 1px solid #e0e0e0;
+}
+
+/* 展开状态 */
+#intervals-ai-root.expanded {
+  width: 320px;
+  height: auto;
+  max-height: 80vh;
+}
+
+/* 顶部栏 (始终可见) */
+.iai-header {
+  height: 40px;
+  background: #d32f2f;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  cursor: pointer;
+  color: white;
+  white-space: nowrap;
+}
+
+.iai-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.iai-title {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0; /* 收起时隐藏标题 */
+  transition: opacity 0.2s;
+}
+
+#intervals-ai-root.expanded .iai-title {
+  opacity: 1;
+}
+
+/* 内容区域 */
+.iai-content {
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  overflow-y: auto;
+  max-height: calc(80vh - 40px);
+}
+
+#intervals-ai-root.expanded .iai-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 按钮样式 */
+.iai-btn {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 13px;
+  margin-top: 8px;
+}
+.iai-btn:hover { background: #b71c1c; }
+.iai-btn:disabled { background: #ccc; cursor: default; }
+
+.iai-settings-link {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Markdown 渲染样式 */
+.iai-markdown h3 { color: #d32f2f; margin: 10px 0 5px; font-size: 14px; }
+.iai-markdown p { font-size: 13px; line-height: 1.5; color: #333; margin-bottom: 8px; }
+.iai-markdown strong { color: #000; font-weight: 600; }
+
+/* 预览模式的遮罩 */
+.iai-preview-mask {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}

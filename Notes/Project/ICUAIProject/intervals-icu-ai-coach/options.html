@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Intervals AI Coach Settings</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f9f9f9; padding: 40px; max-width: 600px; margin: 0 auto; }
+    h1 { color: #d32f2f; display: flex; align-items: center; gap: 10px; }
+    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #333; }
+    .hint { font-size: 12px; color: #666; margin-bottom: 8px; display: block; }
+    
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 16px; font-size: 14px; }
+    input:focus, select:focus { border-color: #d32f2f; outline: none; }
+    
+    .checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .checkbox-row input { width: auto; margin: 0; }
+    .checkbox-row label { margin: 0; font-weight: normal; }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    button { padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; border: none; }
+    .btn-save { background: #d32f2f; color: white; }
+    .btn-save:hover { background: #b71c1c; }
+    
+    .provider-link { font-size: 12px; color: #d32f2f; text-decoration: none; display: inline-block; margin-top: -12px; margin-bottom: 16px; }
+    .provider-link:hover { text-decoration: underline; }
+    
+    #status { margin-left: 10px; font-size: 14px; color: green; display: none; }
+  </style>
+</head>
+<body>
+  <h1 data-i18n="settingsTitle">⚙️ Intervals AI Settings</h1>
+  
+  <div class="card">
+    <label for="langSelect" data-i18n="languageLabel">Language / 语言</label>
+    <select id="langSelect">
+      <option value="auto" selected>Auto (Follow Browser) / 自动 (跟随浏览器)</option>
+      <option value="en">English</option>
+      <option value="zh">中文</option>
+    </select>
+
+    <label for="provider" data-i18n="providerLabel">AI Provider</label>
+    <select id="provider">
+      <option value="" disabled selected data-i18n="selectProviderPlaceholder">-- Select Provider --</option>
+      <option value="openai">OpenAI</option>
+      <option value="deepseek">DeepSeek</option>
+      <option value="claude">Claude (Anthropic)</option>
+      <option value="gemini">Gemini (Google)</option>
+      <option value="api2d">API2D (Proxy)</option>
+      <option value="custom" data-i18n="customProvider">Custom</option>
+    </select>
+    
+    <label for="apiBaseUrl" data-i18n="baseUrlLabel">API Base URL</label>
+    <input type="text" id="apiBaseUrl" placeholder="https://api.openai.com/v1/chat/completions">
+    
+    <label for="apiKey">API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-...">
+    <a id="getKeyLink" href="#" target="_blank" class="provider-link" style="display:none;" data-i18n="getKeyLink">👉 Get API Key</a>
+
+    <label for="modelName" data-i18n="modelNameLabel">Model Name</label>
+    <input type="text" id="modelName" list="modelList" placeholder="gpt-4o, deepseek-chat, claude-3-5-sonnet...">
+    <datalist id="modelList">
+      <!-- Populated by JS -->
+    </datalist>
+  </div>
+
+  <div class="card">
+    <div class="checkbox-row">
+      <input type="checkbox" id="autoAnalyze">
+      <label for="autoAnalyze" data-i18n="autoAnalyzeLabel">Auto-Analyze when opening panel</label>
+    </div>
+
+    <label data-i18n="promptLabel">Custom Prompt</label>
+    <span class="hint" data-i18n="promptHint">If empty, uses the default prompt from prompt.txt.</span>
+    <textarea id="customPrompt" rows="5" placeholder="..."></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button id="saveBtn" class="btn-save" data-i18n="saveBtn">Save Settings</button>
+    <span id="status" data-i18n="saveSuccess">✅ Saved!</span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
