@@ -163,3 +163,72 @@
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
+
+/* Progress steps */
+.iai-progress-container {
+  padding: 8px 0;
+}
+
+.iai-progress-step {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+  opacity: 0.4;
+}
+
+.iai-progress-step.in-progress {
+  opacity: 1;
+  background: #fff8e1;
+  margin: 0 -12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.iai-progress-step.completed {
+  opacity: 0.7;
+}
+
+.iai-progress-step.error {
+  opacity: 1;
+  background: #ffebee;
+  margin: 0 -12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.iai-progress-icon {
+  font-size: 16px;
+  margin-right: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.iai-progress-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.iai-progress-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #666;
+}
+
+.iai-progress-step.in-progress .iai-progress-text {
+  color: #333;
+  font-weight: 500;
+}
+
+.iai-progress-step.completed .iai-progress-text {
+  color: #4caf50;
+}
+
+.iai-progress-step.error .iai-progress-text {
+  color: #d32f2f;
+  font-weight: 500;
+}

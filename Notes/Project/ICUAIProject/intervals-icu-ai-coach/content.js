@@ -60,47 +60,135 @@ function initUI() {
     }
 
     analyzeBtn.disabled = true;
-    analyzeBtn.textContent = "AI is thinking...";
-    resultArea.innerHTML = "<p>Fetching data and analyzing...</p>";
+    analyzeBtn.textContent = "Analyzing...";
+
+    // Show progress steps
+    showProgressSteps(resultArea);
 
     try {
-      // A. Scrape data
+      // Step 1: Scraping data
+      updateProgressStep(1, 'in-progress');
+      await sleep(300); // Small delay for visual feedback
       const data = scrapeIntervalsData();
+      updateProgressStep(1, 'completed');
 
-      // B. Send to background for processing (cross-origin requests must be done in background)
+      // Step 2: Preparing request
+      updateProgressStep(2, 'in-progress');
+      await sleep(200);
+      updateProgressStep(2, 'completed');
+
+      // Step 3: Calling AI
+      updateProgressStep(3, 'in-progress');
+
+      // B. Send to background for processing
       chrome.runtime.sendMessage({
         action: "ANALYZE_ACTIVITY",
         data: data,
         lang: navigator.language || "en-US"
       }, (response) => {
-        analyzeBtn.disabled = false;
-        analyzeBtn.textContent = "Re-Analyze";
-
         if (response && response.success) {
-          // Render result with code block support
-          resultArea.innerHTML = parseMarkdown(response.result);
-          // Add copy buttons to code blocks
-          addCopyButtonsToCodeBlocks();
+          updateProgressStep(3, 'completed');
+
+          // Step 4: Rendering results
+          updateProgressStep(4, 'in-progress');
+          setTimeout(() => {
+            updateProgressStep(4, 'completed');
+
+            // Show final results after a brief moment
+            setTimeout(() => {
+              resultArea.innerHTML = parseMarkdown(response.result);
+              addCopyButtonsToCodeBlocks();
+              analyzeBtn.disabled = false;
+              analyzeBtn.textContent = "Re-Analyze";
+            }, 300);
+          }, 200);
         } else {
-          resultArea.innerHTML = `<p style="color:red">Analysis failed: ${response.error || 'Unknown error'}</p>`;
-          if (response && response.error && response.error.includes("API Key")) {
-             resultArea.innerHTML += `<p><a style="cursor:pointer;text-decoration:underline" id="iai-fix-key">Click to configure API Key</a></p>`;
-             document.getElementById('iai-fix-key').addEventListener('click', () => chrome.runtime.sendMessage({ action: "OPEN_OPTIONS" }));
-          }
+          updateProgressStep(3, 'error');
+          setTimeout(() => {
+            resultArea.innerHTML = `<p style="color:red">Analysis failed: ${response.error || 'Unknown error'}</p>`;
+            if (response && response.error && response.error.includes("API Key")) {
+               resultArea.innerHTML += `<p><a style="cursor:pointer;text-decoration:underline" id="iai-fix-key">Click to configure API Key</a></p>`;
+               document.getElementById('iai-fix-key').addEventListener('click', () => chrome.runtime.sendMessage({ action: "OPEN_OPTIONS" }));
+            }
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = "Retry";
+          }, 500);
         }
       });
 
     } catch (e) {
       console.error(e);
-      analyzeBtn.disabled = false;
-      analyzeBtn.textContent = "Retry";
-      resultArea.innerHTML = `<p style="color:red">Error: ${e.message}</p>`;
+      updateProgressStep(1, 'error');
+      setTimeout(() => {
+        resultArea.innerHTML = `<p style="color:red">Error: ${e.message}</p>`;
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Retry";
+      }, 500);
     }
   });
 }
 
 function checkIsActivityPage() {
     return window.location.href.includes('/activities/');
+}
+
+// Helper function to show progress steps
+function showProgressSteps(container) {
+  const steps = [
+    { id: 1, text: 'Scraping workout data from page' },
+    { id: 2, text: 'Preparing AI analysis request' },
+    { id: 3, text: 'Calling AI service (this may take 10-30s)' },
+    { id: 4, text: 'Rendering analysis results' }
+  ];
+
+  let html = '<div class="iai-progress-container">';
+  steps.forEach(step => {
+    html += `
+      <div class="iai-progress-step" data-step="${step.id}">
+        <div class="iai-progress-icon" id="step-icon-${step.id}">⏳</div>
+        <div class="iai-progress-text">${step.text}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+// Helper function to update progress step status
+function updateProgressStep(stepId, status) {
+  const iconEl = document.getElementById(`step-icon-${stepId}`);
+  const stepEl = document.querySelector(`[data-step="${stepId}"]`);
+
+  if (!iconEl || !stepEl) return;
+
+  // Remove previous status classes
+  stepEl.classList.remove('pending', 'in-progress', 'completed', 'error');
+  stepEl.classList.add(status);
+
+  // Update icon
+  switch(status) {
+    case 'in-progress':
+      iconEl.textContent = '⚙️';
+      iconEl.classList.add('spinning');
+      break;
+    case 'completed':
+      iconEl.textContent = '✅';
+      iconEl.classList.remove('spinning');
+      break;
+    case 'error':
+      iconEl.textContent = '❌';
+      iconEl.classList.remove('spinning');
+      break;
+    default:
+      iconEl.textContent = '⏳';
+      iconEl.classList.remove('spinning');
+  }
+}
+
+// Helper function for delays
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Simple data scraping
