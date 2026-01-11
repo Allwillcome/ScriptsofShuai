@@ -1,22 +1,22 @@
-// 监听来自 content script 的消息
+// Listen to messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "OPEN_OPTIONS") {
     chrome.runtime.openOptionsPage();
   }
 
   if (request.action === "ANALYZE_ACTIVITY") {
-    // 异步处理需要 return true
+    // Async processing requires return true
     handleAnalysis(request.data, request.lang).then(result => {
       sendResponse({ success: true, result: result });
     }).catch(err => {
       console.error("Analysis failed:", err);
       sendResponse({ success: false, error: err.message });
     });
-    return true; 
+    return true;
   }
 });
 
-// 点击插件图标时的逻辑 (急救功能)
+// Logic when clicking extension icon (emergency injection)
 chrome.action.onClicked.addListener(async (tab) => {
   if (tab.url && tab.url.includes("intervals.icu")) {
     try {
@@ -28,9 +28,9 @@ chrome.action.onClicked.addListener(async (tab) => {
         target: { tabId: tab.id },
         files: ["content.js"]
       });
-      console.log("已尝试手动注入 UI");
+      console.log("Attempted manual UI injection");
     } catch (e) {
-      console.warn("注入失败:", e);
+      console.warn("Injection failed:", e);
       chrome.runtime.openOptionsPage();
     }
   } else {
@@ -40,18 +40,18 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 async function handleAnalysis(activityData, lang) {
   try {
-    // 1. 读取配置
+    // 1. Read configuration
     const config = await chrome.storage.sync.get(['provider', 'apiBaseUrl', 'apiKey', 'modelName', 'customPrompt']);
-    
+
     if (!config.apiKey) {
       throw new Error("API Key missing. Please configure in settings.");
     }
-    
+
     const provider = config.provider || 'openai';
     const apiUrl = config.apiBaseUrl || "https://api.openai.com/v1/chat/completions";
     const model = config.modelName || "gpt-4o-mini";
 
-    // 2. 准备 Prompt
+    // 2. Prepare prompt
     let systemPrompt = config.customPrompt;
     if (!systemPrompt) {
       try {
@@ -68,7 +68,7 @@ async function handleAnalysis(activityData, lang) {
 
     const finalPrompt = `${systemPrompt}\n\nData: ${JSON.stringify(activityData)}`;
 
-    // 3. 调用 API
+    // 3. Call API
     let fetchOptions = {};
     let responseText = "";
 
@@ -168,8 +168,8 @@ async function handleAnalysis(activityData, lang) {
     }
 
     const json = await res.json();
-    
-    // 4. 解析响应
+
+    // 4. Parse response
     if (provider === 'claude') {
       if (json.content && json.content.length > 0) {
         return json.content[0].text;

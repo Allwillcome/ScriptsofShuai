@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>心脏恢复四象限图（HRV vs RHR）</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: -apple-system, "Helvetica Neue", Arial; margin: 20px; }
+  h2 { margin-bottom: 6px; }
+  #container { display:flex; gap:20px; align-items:flex-start; }
+  #chartWrap { width:720px; }
+  #legend { width:360px; }
+  .info { font-size:13px; color:#333; line-height:1.5; }
+  .scoreChip { display:inline-block; padding:4px 8px; border-radius:6px; background:#eee; margin:4px 0;}
+</style>
+</head>
+<body>
+<h2>心脏恢复四象限图（示例）</h2>
+<div id="container">
+  <div id="chartWrap">
+    <canvas id="quadChart" width="720" height="540"></canvas>
+  </div>
+  <div id="legend">
+    <div class="info">
+      <strong>说明（实现细节）</strong>
+      <ul>
+        <li>横轴 x = ΔHRV = HRV_7day_avg - HRV_60day_baseline （单位：lnRMSSD）</li>
+        <li>纵轴 y = ΔRHR_good = RHR_60day_baseline - RHR_7day_avg （单位：bpm；正值表示夜间RHR下降 / 情况变好）</li>
+        <li>SWC（smallest worthwhile change）以绝对值形式在两轴画出 ±SWC 窗口（示例值：HRV_SW C = 0.10 lnRMSSD, RHR_SWC = 1.5 bpm）。</li>
+        <li>象限定义（对应文中 4 状态）：
+          <ol>
+            <li>状态1（良好适应）：ΔHRV ≥ -SWC && ΔRHR_good ≥ -SWC （HRV ↑ 或在SWC内，RHR ↓ 或在SWC内）→ 绿灯</li>
+            <li>状态2（急性疲劳）：ΔHRV < -SWC && ΔRHR_good < -SWC （HRV ↓ 且 RHR ↑）→ 红灯</li>
+            <li>状态3（累积疲劳 / 高HRV 高HR悖论）：ΔHRV > +SWC && ΔRHR_good < -SWC（HRV ↑ 且夜间RHR ↑）→ 黄/红</li>
+            <li>状态4（慢性疲劳）：ΔHRV < -SWC && ΔRHR_good > +SWC（HRV ↓ 且 RHR ↓ —— 注：这里用 ΔRHR_good 表示基线 - 当前，若为负则表示RHR上升）</li>
+          </ol>
+        </li>
+      </ul>
+      <strong>恢复分数（0–100）—— 公式概述</strong>
+      <div class="scoreChip" id="formulaSummary">
+        Score = clamp( 50 + 25 * z_HRV + 25 * z_RHR , 0,100 ) + stateAdjustment
+      </div>
+      <p>其中：</p>
+      <ul>
+        <li>z_HRV = (HRV_7 - HRV_60) / SWC_HRV（在 -3..+3 之间截断）</li>
+        <li>z_RHR = (RHR_60 - RHR_7) / SWC_RHR（正表示更好；在 -3..+3 截断）</li>
+        <li>stateAdjustment：如果处于高风险状态会减分（状态2：-30，状态3：-20，状态4：-35；状态1：0）</li>
+      </ul>
+      <p><strong>提示：</strong>参数（SWC、权重、状态惩罚）均可按目标人群或经验数据微调。</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ------------------ 参数（可调整） ------------------
+const HRV_60 = 4.00;           // 示例慢性基线 lnRMSSD
+const RHR_60 = 50.0;           // 示例慢性基线 夜间RHR (bpm)
+const SWC_HRV = 0.10;          // SWC for lnRMSSD (示例)
+const SWC_RHR = 1.5;           // SWC for RHR (bpm)
+const zClamp = (v)=> Math.max(-3, Math.min(3, v));
+
+// 状态惩罚（分数点）
+const STATE_PENALTIES = { '1': 0, '2': -30, '3': -20, '4': -35 };
+
+// ------------------ 模拟数据（每个点代表某一日的 7-day avg vs 60-day baseline 差异） ------------------
+// 每个点包含：day, HRV_7, RHR_7 （真实值），下面会计算 ΔHRV 和 ΔRHR_good
+const sim = [
+  {day:1, HRV7:4.25, RHR7:48.8},
+  {day:2, HRV7:4.10, RHR7:49.5},
+  {day:3, HRV7:3.85, RHR7:52.0},
+  {day:4, HRV7:4.50, RHR7:51.5},
+  {day:5, HRV7:3.70, RHR7:53.0},
+  {day:6, HRV7:4.05, RHR7:49.8},
+  {day:7, HRV7:4.30, RHR7:50.8},
+  {day:8, HRV7:3.60, RHR7:54.2},
+  {day:9, HRV7:4.40, RHR7:51.8},
+  {day:10,HRV7:3.95, RHR7:50.5},
+  {day:11,HRV7:3.50, RHR7:55.0},
+  {day:12,HRV7:4.35, RHR7:52.5},
+  {day:13,HRV7:4.12, RHR7:49.9},
+  {day:14,HRV7:3.80, RHR7:53.2}
+];
+
+// 计算指标、状态和分数
+function computePoint(p){
+  const dHRV = p.HRV7 - HRV_60;          // ΔHRV (lnRMSSD)
+  const dRHR_good = RHR_60 - p.RHR7;     // positive = better (baseline - current)
+  // z scores relative to SWC
+  const zHRV = zClamp(dHRV / SWC_HRV);
+  const zRHR = zClamp(dRHR_good / SWC_RHR);
+
+  // 判定状态（基于 SWC 窗口）
+  const h_up = dHRV > SWC_HRV;   // HRV above SWC upper
+  const h_down = dHRV < -SWC_HRV;
+  const r_up = dRHR_good > SWC_RHR;   // RHR decreased significantly (good)
+  const r_down = dRHR_good < -SWC_RHR; // RHR increased significantly (bad)
+  let state = 1;
+  // 根据文中表格映射（注意：我们用 dRHR_good positive=better）
+  if (!h_up && !h_down && !r_up && !r_down) {
+    state = 1; // 都在 SWC 内 -> 状态1（良好/正常）
+  } else if (h_down && r_down) {
+    state = 2; // HRV↓ & RHR worse(↑) -> 急性疲劳
+  } else if (h_up && r_down) {
+    state = 3; // HRV↑ & RHR worse(↑) -> 累积疲劳/悖论
+  } else if (h_down && r_up) {
+    state = 4; // HRV↓ & RHR improved? (文档定义的慢性疲劳对应 HRV↓, HR↑；这里用一致的映射为状态4)
+  } else {
+    // 其他混合情况，依据主导方向判定（简化逻辑）
+    if (h_up && !r_up) state = 3;
+    else if (h_down && !r_up) state = 2;
+    else state = 1;
+  }
+
+  // 基础得分由 zHRV 和 zRHR 线性组合得到（范围大概  -150..+150 再限幅）
+  let baseScore = 50 + 25 * zHRV + 25 * zRHR; // 50 中性分，两个分量各占 25
+  // 应用状态惩罚
+  const penalty = STATE_PENALTIES[String(state)];
+  let finalScore = Math.round(Math.max(0, Math.min(100, baseScore + penalty)));
+  // 返回可绘图的坐标（x,y）与其他信息
+  return {
+    day: p.day,
+    HRV7: p.HRV7,
+    RHR7: p.RHR7,
+    dHRV: round(dHRV,3),
+    dRHR_good: round(dRHR_good,3),
+    zHRV: round(zHRV,2),
+    zRHR: round(zRHR,2),
+    state, baseScore: round(baseScore,1), penalty, finalScore,
+    x: round(dHRV,3),
+    y: round(dRHR_good,3)
+  };
+}
+
+function round(v, n=2){ return Math.round(v * Math.pow(10,n))/Math.pow(10,n); }
+
+const points = sim.map(computePoint);
+
+// ---------- Chart.js 绘制 ----------
+
+const ctx = document.getElementById('quadChart').getContext('2d');
+
+// quadrant shading: we'll draw plugin rectangles before datasets
+const quadPlugin = {
+  id: 'quadPlugin',
+  beforeDraw(chart, args, options){
+    const {ctx, chartArea:ca, scales} = chart;
+    // compute SWC positions in pixels
+    const x0 = scales.x.getPixelForValue(-SWC_HRV);
+    const x1 = scales.x.getPixelForValue(SWC_HRV);
+    const y0 = scales.y.getPixelForValue(-SWC_RHR);
+    const y1 = scales.y.getPixelForValue(SWC_RHR);
+
+    // draw subtle quadrant colored backgrounds
+    ctx.save();
+    // top-right (x>0,y>0) good -> light green
+    ctx.fillStyle = 'rgba(144,238,144,0.08)'; // pale green
+    ctx.fillRect(Math.max(ca.left, scales.x.getPixelForValue(0)), ca.top,
+                 ca.right - Math.max(ca.left, scales.x.getPixelForValue(0)), y1 - ca.top);
+    // top-left (x<0,y>0) yellow
+    ctx.fillStyle = 'rgba(255,255,0,0.06)';
+    ctx.fillRect(ca.left, ca.top, Math.max(0, scales.x.getPixelForValue(0)-ca.left), y1 - ca.top);
+    // bottom-left (x<0,y<0) red
+    ctx.fillStyle = 'rgba(255,99,71,0.06)';
+    ctx.fillRect(ca.left, y0, Math.max(0, scales.x.getPixelForValue(0)-ca.left), ca.bottom - y0);
+    // bottom-right (x>0,y<0) amber (paradox)
+    ctx.fillStyle = 'rgba(255,165,0,0.06)';
+    ctx.fillRect(Math.max(ca.left, scales.x.getPixelForValue(0)), y0, ca.right - Math.max(ca.left, scales.x.getPixelForValue(0)), ca.bottom - y0);
+
+    // draw SWC vertical band
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+    ctx.lineWidth = 1;
+    // vertical lines ±SWC_HRV
+    ctx.beginPath();
+    ctx.setLineDash([6,6]);
+    ctx.moveTo(x0, ca.top); ctx.lineTo(x0, ca.bottom);
+    ctx.moveTo(x1, ca.top); ctx.lineTo(x1, ca.bottom);
+    // horizontal lines ±SWC_RHR (in our y metric units)
+    ctx.moveTo(ca.left, y0); ctx.lineTo(ca.right, y0);
+    ctx.moveTo(ca.left, y1); ctx.lineTo(ca.right, y1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+};
+
+// prepare scatter data and point styling based on state
+const dataPoints = points.map(p=>{
+  const color = p.state === 1 ? 'green' : (p.state===2 ? 'red' : (p.state===3 ? 'orange' : 'purple'));
+  return {
+    x: p.x, y: p.y, label: 'Day '+p.day,
+    backgroundColor: color, borderColor: color,
+    r: 6,
+    pointData: p
+  };
+});
+
+const chart = new Chart(ctx, {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: '模拟样本（7-day avg vs 60-day baseline）',
+      data: dataPoints,
+      showLine:false,
+      pointHoverRadius:10
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label(context){
+            const d = context.raw.pointData;
+            return [
+              `Day ${d.day}`,
+              `ΔHRV = ${d.dHRV} lnRMSSD`,
+              `ΔRHR_good = ${d.dRHR_good} bpm`,
+              `State: ${d.state}`,
+              `BaseScore: ${d.baseScore}  Penalty: ${d.penalty}`,
+              `Final Score: ${d.finalScore}`
+            ];
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display:true, text: 'ΔHRV (HRV_7 - HRV_60) [lnRMSSD]' },
+        min: -1.0, max: 1.0,
+        ticks: { stepSize: 0.2 }
+      },
+      y: {
+        title: { display:true, text: 'ΔRHR_good (RHR_60 - RHR_7) [bpm], 正=改善' },
+        min: -6, max: 6,
+        ticks: { stepSize: 1 }
+      }
+    },
+    onClick(e){
+      const pts = chart.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false);
+      if (pts.length){
+        const idx = pts[0].index;
+        const d = chart.data.datasets[0].data[idx].pointData;
+        alert(`Day ${d.day}\nΔHRV=${d.dHRV}\nΔRHR_good=${d.dRHR_good}\nState=${d.state}\nFinal Score=${d.finalScore}`);
+      }
+    }
+  },
+  plugins: [quadPlugin]
+});
+
+// draw threshold labels on chart using Chart.js annotation-like overlay
+// (we will draw text overlays on canvas)
+function drawAnnotations(){
+  const ca = chart.chartArea;
+  const scales = chart.scales;
+  const c = ctx;
+  c.save();
+  c.font = '12px system-ui';
+  c.fillStyle = '#333';
+  // SWC positions
+  const xneg = scales.x.getPixelForValue(-SWC_HRV);
+  const xpos = scales.x.getPixelForValue(SWC_HRV);
+  const yneg = scales.y.getPixelForValue(-SWC_RHR);
+  const ypos = scales.y.getPixelForValue(SWC_RHR);
+  // Label SWC values
+  c.fillText(`-SWC_HRV (${ -SWC_HRV })`, xneg+4, ca.top + 14);
+  c.fillText(`+SWC_HRV (${ SWC_HRV })`, xpos+4, ca.top + 14);
+  c.fillText(`+SWC_RHR (${ SWC_RHR } bpm)`, ca.left + 6, ypos - 6);
+  c.fillText(`-SWC_RHR (${ -SWC_RHR } bpm)`, ca.left + 6, yneg - 6);
+
+  // quadrant labels
+  c.fillStyle = 'rgba(0,0,0,0.6)';
+  c.fillText('状态1\n(良好)', scales.x.getPixelForValue(0.3), scales.y.getPixelForValue(2.6));
+  c.fillText('状态3\n(累积疲劳)\n(高HRV & 高RHR)', scales.x.getPixelForValue(0.3), scales.y.getPixelForValue(-2.2));
+  c.fillText('状态2\n(急性疲劳)', scales.x.getPixelForValue(-0.7), scales.y.getPixelForValue(-2.2));
+  c.fillText('状态4\n(慢性疲劳)', scales.x.getPixelForValue(-0.7), scales.y.getPixelForValue(2.6));
+  c.restore();
+}
+
+// initial annotation draw and after each render
+drawAnnotations();
+chart.update();
+chart.on('afterDraw', ()=>{ drawAnnotations(); });
+
+// also append a textual table of computed points
+const table = document.createElement('div');
+table.innerHTML = `<h4>模拟点计算结果</h4>` + 
+  `<table style="font-size:13px;border-collapse:collapse"><thead><tr>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">Day</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">ΔHRV</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">ΔRHR_good</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">zHRV</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">zRHR</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">State</th>
+  <th style="padding:4px 8px;border-bottom:1px solid #ddd">Score</th>
+  </tr></thead><tbody>` +
+  points.map(d=>`<tr>
+    <td style="padding:4px 8px">${d.day}</td>
+    <td style="padding:4px 8px">${d.dHRV}</td>
+    <td style="padding:4px 8px">${d.dRHR_good}</td>
+    <td style="padding:4px 8px">${d.zHRV}</td>
+    <td style="padding:4px 8px">${d.zRHR}</td>
+    <td style="padding:4px 8px">${d.state}</td>
+    <td style="padding:4px 8px">${d.finalScore}</td>
+  </tr>`).join('') + `</tbody></table>`;
+document.getElementById('legend').appendChild(table);
+
+</script>
+</body>
+</html>

@@ -1,2 +1,24 @@
 .DS_Store
-.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude workspace sandbox (临时测试文件)
+claude-workspace/sandbox/*
+!claude-workspace/sandbox/.gitkeep

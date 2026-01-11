@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Intervals.icu AI Coach",
-  "version": "2.1",
-  "description": "Embedded AI analysis for Intervals.icu activities.",
+  "version": "0.2.0",
+  "description": "AI-powered workout analysis and personalized training plans for Intervals.icu",
   "permissions": [
     "activeTab",
     "scripting",

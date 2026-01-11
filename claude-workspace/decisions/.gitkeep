@@ -1,0 +1,5 @@
+# DecisionLog 决策记录目录
+
+此目录存储通过 DecisionLog skill 生成的决策记录文件。
+
+文件命名格式：`YYYY-MM-DD-{short-title}.md`
