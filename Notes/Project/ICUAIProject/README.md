@@ -3,7 +3,7 @@
 > AI-powered workout analysis and personalized training plans for Intervals.icu
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-success)](https://chromewebstore.google.com)
-[![Version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/yourusername/intervals-icu-ai-coach/releases)
+[![Version](https://img.shields.io/badge/version-0.2.1-blue)](https://github.com/yourusername/intervals-icu-ai-coach/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
 Transform your training data into actionable insights with AI-powered analysis. Get personalized workout feedback and generate structured training plans in Intervals.icu format—all with a single click.
@@ -15,10 +15,16 @@ Transform your training data into actionable insights with AI-powered analysis. 
 - **Data-Driven Insights**: Heart rate zones, pace, power metrics analyzed automatically
 - **Conversational Tone**: Friendly, coach-like feedback that's easy to understand
 
-### 📋 **Personalized Training Plans** *(NEW in v0.2.0)*
+### 📋 **Personalized Training Plans** *(v0.2.0)*
 - **Auto-Generated Workouts**: AI suggests next training session based on your performance
 - **Intervals.icu Format**: Plans generated in native plain text format
 - **One-Click Copy**: Copy workout plans with a single click to paste into Intervals.icu
+
+### ✅ **Automatic Format Validation** *(NEW in v0.2.1)*
+- **Agent Architecture**: AI validates and self-corrects workout format automatically
+- **Format Checker**: Validates time, intensity, and structure against Intervals.icu specification
+- **Auto-Correction**: Up to 3 correction attempts if format errors detected
+- **100% Import-Ready**: Ensures every workout plan is valid and ready to use
 
 ### 🔧 **Flexible AI Provider Support**
 - OpenAI (GPT-4, GPT-4o-mini)
@@ -120,15 +126,23 @@ The extension generates workouts in Intervals.icu plain text format:
 ```
 ICUAIProject/
 ├── intervals-icu-ai-coach/    # Extension source code
-│   ├── manifest.json          # Extension manifest
-│   ├── content.js             # Content script (UI)
-│   ├── background.js          # Background service worker (API calls)
+│   ├── manifest.json          # Extension manifest (Manifest V3)
+│   ├── content.js             # Content script (UI, progress updates)
+│   ├── background.js          # Service worker (Agent, API calls, logging)
+│   ├── validator.js           # Intervals.icu format validator
+│   ├── logger.js              # Operation logging (NEW in v0.2.1)
 │   ├── options.html           # Settings page
 │   ├── options.js             # Settings logic
 │   ├── styles.css             # Widget styles
 │   ├── prompt.txt             # AI coaching prompt template
 │   └── icons/                 # Extension icons (16/32/48/128)
 ├── docs/                      # Documentation
+│   ├── PRD.md                 # Product requirements document
+│   ├── INTERVALS_ICU_WORKOUT_FORMAT.md
+│   ├── TESTING_v0.2.1.md
+│   └── BACKEND_SOLUTION.md    # Future backend planning
+├── CHANGELOG.md               # Version history
+├── DEVELOPMENT_STANDARDS.md   # Development guidelines
 └── README.md                  # This file
 ```
 
@@ -142,9 +156,17 @@ cd ICUAIProject
 zip -r intervals-icu-ai-coach.zip intervals-icu-ai-coach/ -x "*.DS_Store" -x "__MACOSX"
 ```
 
+## 📚 Documentation
+
+- [**CHANGELOG.md**](./CHANGELOG.md) - Version history and release notes
+- [**PRD.md**](./docs/PRD.md) - Product requirements document and roadmap
+- [**INTERVALS_ICU_WORKOUT_FORMAT.md**](./docs/INTERVALS_ICU_WORKOUT_FORMAT.md) - Complete format reference
+- [**DEVELOPMENT_STANDARDS.md**](./DEVELOPMENT_STANDARDS.md) - Chrome extension development guidelines
+- [**TESTING_v0.2.1.md**](./docs/TESTING_v0.2.1.md) - Testing guide for v0.2.1
+
 ### Contributing
 
-Contributions are welcome! Please read [DEVELOPMENT_STANDARDS.md](./docs/DEVELOPMENT_STANDARDS.md) first.
+Contributions are welcome! Please read [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) first.
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
@@ -153,6 +175,16 @@ Contributions are welcome! Please read [DEVELOPMENT_STANDARDS.md](./docs/DEVELOP
 5. Open a Pull Request
 
 ## 📝 Changelog
+
+### v0.2.1 (2025-01-12)
+- ✨ **NEW**: Agent-style analysis architecture with automatic format validation
+- ✨ **NEW**: AI self-correction mechanism (up to 3 attempts)
+- ✨ **NEW**: Intervals.icu format validator (`validator.js`)
+- ✨ **NEW**: Operation logging system for debugging
+- 🎨 **IMPROVED**: Enhanced progress feedback (4 steps → 5 steps)
+- 🎨 **IMPROVED**: Real-time progress updates from background script
+- 📚 **DOCS**: Added testing guide (TESTING_v0.2.1.md)
+- 📚 **DOCS**: Updated PRD with v0.2.1 features
 
 ### v0.2.0 (2025-01-07)
 - ✨ **NEW**: AI-generated training plans in Intervals.icu format
@@ -166,6 +198,8 @@ Contributions are welcome! Please read [DEVELOPMENT_STANDARDS.md](./docs/DEVELOP
 - ✨ AI-powered workout analysis
 - 🔧 Multi-provider AI support (OpenAI, Claude, DeepSeek, etc.)
 - 🎨 Floating widget UI
+
+See [CHANGELOG.md](./CHANGELOG.md) for detailed release notes.
 
 ## 🤝 Acknowledgments
 
