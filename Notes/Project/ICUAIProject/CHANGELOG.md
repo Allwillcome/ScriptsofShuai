@@ -8,8 +8,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Documentation for development workflow
 - Unit tests for core functions (planned)
+- Performance optimization for large workout data (planned)
+
+---
+
+## [0.2.1] - 2025-01-12
+
+### ✨ Added
+- **Agent-Style Analysis Architecture**: AI now validates and self-corrects workout format
+  - Automatic validation of generated workout plans
+  - Up to 3 correction attempts if format errors detected
+  - Ensures all workouts comply with Intervals.icu format specification
+- **Intervals.icu Format Validator**: New `validator.js` module
+  - Validates time patterns (10m, 30s, 1h)
+  - Validates intensity patterns (75%, Z2, 200w)
+  - Validates step structure (lines starting with "-")
+  - Extracts and validates code blocks from markdown
+  - Provides detailed error and warning messages
+- **Operation Logging System**: Comprehensive logging in background script
+  - Logs all API calls, validations, and errors
+  - Stores last 100 operations in memory
+  - Console output for development debugging
+  - Structured log format with timestamps and operation details
+- **Enhanced Progress Feedback**: 5-step progress system
+  - Step 1: Scraping workout data
+  - Step 2: Preparing AI request
+  - Step 3: Generating AI analysis (shows attempt number)
+  - Step 4: Validating workout format
+  - Step 5: Rendering results
+  - Real-time progress updates via message passing
+  - Shows validation errors and correction attempts inline
+
+### 🌐 Changed
+- **Background Script Refactoring**: Split `handleAnalysis()` into agent workflow
+  - New `handleAgentAnalysis()` function orchestrates agent process
+  - New `callAI()` function for actual API calls
+  - New `validateWorkout()` function for format checking
+  - New `sendProgress()` function for progress updates to content script
+- **Content Script Updates**: Enhanced progress UI
+  - Updated progress steps from 4 to 5
+  - Added message listener for real-time progress updates
+  - Added `handleProgressUpdate()` function for agent stage handling
+  - Dynamic text updates for attempt numbers and validation errors
+- **Manifest Updates**: Added validator.js to content scripts
+  - Injected on all intervals.icu pages
+  - Also injected during manual UI injection
+
+### 📚 Documentation
+- Updated PRD.md with v0.2.1 features (F8, F9, F10)
+- Renumbered upcoming features (F11-F14)
+- Added Phase 2.1 to roadmap
+- Updated document history
+
+### 🐛 Fixed
+- None in this release
+
+### 🔒 Security
+- No security changes
 
 ---
 

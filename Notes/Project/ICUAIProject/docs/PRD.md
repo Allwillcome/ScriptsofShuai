@@ -158,9 +158,49 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
 - **User Value**: Accessibility for international users
 - **Scope**: UI text, code comments, documentation
 
+### v0.2.1 (Released 2025-01-12)
+
+#### F8: Agent-Style Analysis with Self-Correction
+**Status**: ✅ Shipped
+
+- **Description**: AI agent validates and corrects workout format automatically
+- **User Value**: Ensures generated workouts are always in correct Intervals.icu format
+- **Technical Implementation**:
+  - Validator.js checks workout format against Intervals.icu specification
+  - If validation fails, AI is asked to correct the errors
+  - Up to 3 correction attempts
+  - Full operation logging for debugging
+- **Acceptance Criteria**:
+  - [x] Validate generated workouts against Intervals.icu format
+  - [x] Auto-correct format errors (up to 3 attempts)
+  - [x] Log all operations for debugging
+  - [x] Show validation status in progress UI
+
+#### F9: Enhanced Progress Feedback
+**Status**: ✅ Shipped
+
+- **Description**: Real-time progress updates with validation status
+- **User Value**: Better visibility into what AI is doing
+- **Features**:
+  - 5-step progress (scraping, preparing, generating, validating, rendering)
+  - Shows correction attempts when format errors occur
+  - Visual feedback for validation warnings
+  - Error details displayed inline
+
+#### F10: Operation Logging System
+**Status**: ✅ Shipped
+
+- **Description**: Comprehensive logging of all background operations
+- **User Value**: Easier debugging and issue reporting
+- **Features**:
+  - Logs all API calls, validations, and errors
+  - Stores last 100 operations in memory
+  - Console output for development
+  - Future: Export logs for support
+
 ### Upcoming Features
 
-#### F8: Custom Prompt Templates
+#### F11: Custom Prompt Templates
 **Status**: 📋 Planned for v0.3.0
 
 - **Description**: Users can save and switch between prompt templates
@@ -170,7 +210,7 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
   - [ ] Quick-switch dropdown in widget
   - [ ] Export/import templates
 
-#### F9: Training Load Analysis
+#### F12: Training Load Analysis
 **Status**: 📋 Planned for v0.3.0
 
 - **Description**: Multi-workout analysis, training load trends
@@ -180,7 +220,7 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
   - [ ] Load/stress balance assessment
   - [ ] Recovery recommendations
 
-#### F10: Workout Library
+#### F13: Workout Library
 **Status**: 💡 Idea for v0.4.0
 
 - **Description**: Save and organize generated workouts
@@ -189,6 +229,16 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
   - [ ] Save workouts with tags
   - [ ] Search and filter
   - [ ] One-click reuse
+
+#### F14: True Streaming Output
+**Status**: 💡 Idea for v0.4.0
+
+- **Description**: Stream AI responses chunk-by-chunk using SSE
+- **User Value**: See analysis appear in real-time, even faster perceived performance
+- **Acceptance Criteria**:
+  - [ ] Implement SSE streaming for supported AI providers
+  - [ ] Render markdown as chunks arrive
+  - [ ] Maintain validation on complete response
 
 ---
 
@@ -340,12 +390,22 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
 - [x] F6: Detailed progress feedback
 - [x] F7: English localization
 
+### Phase 2.1: Agent Architecture (✅ Completed)
+**Timeline**: 2025-01 Week 2
+**Goal**: Implement AI agent with self-correction
+
+- [x] F8: Agent-style analysis with self-correction
+- [x] F9: Enhanced progress feedback with validation status
+- [x] F10: Operation logging system
+- [x] Workout format validator (validator.js)
+- [x] Background script refactoring for agent workflow
+
 ### Phase 3: Customization (📋 Planned)
 **Timeline**: 2025-02 Week 1-2
 **Goal**: User personalization
 
-- [ ] F8: Custom prompt templates
-- [ ] F9: Training load analysis
+- [ ] F11: Custom prompt templates
+- [ ] F12: Training load analysis
 - [ ] Widget position customization
 - [ ] Multiple language support
 
@@ -353,7 +413,8 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
 **Timeline**: 2025-03+
 **Goal**: Power user features
 
-- [ ] F10: Workout library
+- [ ] F13: Workout library
+- [ ] F14: True streaming output (SSE)
 - [ ] Multi-workout analysis
 - [ ] Training plan builder (multi-week)
 - [ ] Social features (share analysis)
@@ -446,6 +507,7 @@ By combining AI's analytical capabilities with Intervals.icu's comprehensive tra
 |---------|------|--------|---------|
 | 0.1.0 | 2025-01-06 | Shuaibo Wang | Initial draft |
 | 0.2.0 | 2025-01-07 | Shuaibo Wang | Added training plan features, progress feedback |
+| 0.2.1 | 2025-01-12 | Shuaibo Wang | Added agent architecture, self-correction, validation, logging |
 
 ---
 

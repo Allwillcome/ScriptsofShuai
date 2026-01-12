@@ -3,6 +3,13 @@ if (!document.getElementById('intervals-ai-root')) {
   initUI();
 }
 
+// Listen for progress updates from background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'ANALYSIS_PROGRESS') {
+    handleProgressUpdate(request.stage, request.data);
+  }
+});
+
 function initUI() {
   // 1. Create floating widget container
   const container = document.createElement('div');
@@ -87,12 +94,11 @@ function initUI() {
         lang: navigator.language || "en-US"
       }, (response) => {
         if (response && response.success) {
-          updateProgressStep(3, 'completed');
-
-          // Step 4: Rendering results
-          updateProgressStep(4, 'in-progress');
+          // Background script will handle steps 3-4 via progress updates
+          // Step 5: Rendering results
+          updateProgressStep(5, 'in-progress');
           setTimeout(() => {
-            updateProgressStep(4, 'completed');
+            updateProgressStep(5, 'completed');
 
             // Show final results after a brief moment
             setTimeout(() => {
@@ -104,6 +110,8 @@ function initUI() {
           }, 200);
         } else {
           updateProgressStep(3, 'error');
+          updateProgressStep(4, 'error');
+          updateProgressStep(5, 'error');
           setTimeout(() => {
             resultArea.innerHTML = `<p style="color:red">Analysis failed: ${response.error || 'Unknown error'}</p>`;
             if (response && response.error && response.error.includes("API Key")) {
@@ -137,8 +145,9 @@ function showProgressSteps(container) {
   const steps = [
     { id: 1, text: 'Scraping workout data from page' },
     { id: 2, text: 'Preparing AI analysis request' },
-    { id: 3, text: 'Calling AI service (this may take 10-30s)' },
-    { id: 4, text: 'Rendering analysis results' }
+    { id: 3, text: 'Generating AI analysis (this may take 10-30s)' },
+    { id: 4, text: 'Validating workout format' },
+    { id: 5, text: 'Rendering analysis results' }
   ];
 
   let html = '<div class="iai-progress-container">';
@@ -146,13 +155,70 @@ function showProgressSteps(container) {
     html += `
       <div class="iai-progress-step" data-step="${step.id}">
         <div class="iai-progress-icon" id="step-icon-${step.id}">⏳</div>
-        <div class="iai-progress-text">${step.text}</div>
+        <div class="iai-progress-text" id="step-text-${step.id}">${step.text}</div>
       </div>
     `;
   });
   html += '</div>';
 
   container.innerHTML = html;
+}
+
+// Handle progress updates from background script
+function handleProgressUpdate(stage, data) {
+  const resultArea = document.getElementById('iai-result-area');
+  if (!resultArea) return;
+
+  switch(stage) {
+    case 'generating':
+      // AI is generating analysis
+      const attemptText = data.attempt > 1 ? ` (Attempt ${data.attempt}/3)` : '';
+      const stepText3 = document.getElementById('step-text-3');
+      if (stepText3) {
+        stepText3.textContent = `Generating AI analysis${attemptText}`;
+      }
+      updateProgressStep(3, 'in-progress');
+      break;
+
+    case 'validating':
+      // Validating workout format
+      updateProgressStep(3, 'completed');
+      updateProgressStep(4, 'in-progress');
+      break;
+
+    case 'correcting':
+      // AI is correcting errors
+      updateProgressStep(4, 'completed');
+      const correctionText = `Correcting format errors (Attempt ${data.attempt}/3)`;
+      const stepText4 = document.getElementById('step-text-4');
+      if (stepText4) {
+        stepText4.innerHTML = `${correctionText}<br><span style="font-size:11px;color:#f59e0b">${data.errors.slice(0, 2).join(', ')}</span>`;
+      }
+      updateProgressStep(4, 'in-progress');
+      // Also update step 3 to show it's generating again
+      updateProgressStep(3, 'in-progress');
+      break;
+
+    case 'complete':
+      // Analysis complete
+      updateProgressStep(3, 'completed');
+      updateProgressStep(4, 'completed');
+
+      if (!data.valid) {
+        // Show warning if validation still failed after max attempts
+        const stepText4 = document.getElementById('step-text-4');
+        if (stepText4) {
+          stepText4.innerHTML = `Format validation completed with warnings ⚠️`;
+        }
+      }
+      break;
+
+    case 'error':
+      // Error occurred
+      updateProgressStep(3, 'error');
+      updateProgressStep(4, 'error');
+      break;
+  }
 }
 
 // Helper function to update progress step status

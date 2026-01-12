@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Intervals.icu AI Coach",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI-powered workout analysis and personalized training plans for Intervals.icu",
   "permissions": [
     "activeTab",
@@ -38,7 +38,7 @@
   "content_scripts": [
     {
       "matches": ["https://intervals.icu/*"],
-      "js": ["content.js"],
+      "js": ["validator.js", "content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
     }
