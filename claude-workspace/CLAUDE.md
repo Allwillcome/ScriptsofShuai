@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## PeakWatch 产品流水线
 
-`experiments/product-pipeline/` 管理 PeakWatch 所有功能的内容生产，每个功能遵循以下流程：
+`experiments/2-product-pipeline/` 管理 PeakWatch 所有功能的内容生产，每个功能遵循以下流程：
 
 ```
 PRD → 产品内文章（article/cn.md）→ 多语言翻译（article/en,de,es,jp,kr,tw.md）
@@ -47,6 +47,11 @@ PRD → 产品内文章（article/cn.md）→ 多语言翻译（article/en,de,es
 - `features/{功能名}/gtm/` — 小红书文案等 GTM 内容
 - `campaigns/` — 非功能专属的活动/运营内容
 - `_specs/` — 翻译规范、文章撰写规范
+
+**experiments 目录整体逻辑：**
+- `0-user-data-analysis/` — 用户数据分析
+- `1-competitive-analysis/` — 竞品分析
+- `2-product-pipeline/` — 产品内容流水线
 
 当用户提到功能更新、新功能上线、PRD 变更时，主动检查对应 `features/` 文件夹，提醒用户同步以下内容（如缺失则点名）：
 
