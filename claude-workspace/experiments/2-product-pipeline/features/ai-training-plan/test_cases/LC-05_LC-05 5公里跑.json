@@ -1,0 +1,21 @@
+{
+  "title": "LC-05 5公里跑",
+  "age": 30,
+  "gender": "MALE",
+  "heightCm": 178,
+  "weightKg": 75,
+  "fitnessLevel": "ADVANCED",
+  "courseTheme": "5公里跑 - 跑步速度训练，当前30min→目标25min",
+  "trainingType": "RUNNING",
+  "durationMinutes": 40,
+  "difficulty": "HARD",
+  "trainingVenue": "OUTDOOR",
+  "availableEquipment": [],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "55 bpm"
+}

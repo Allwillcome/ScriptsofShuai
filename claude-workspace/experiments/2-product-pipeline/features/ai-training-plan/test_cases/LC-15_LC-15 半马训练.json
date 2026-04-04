@@ -1,0 +1,21 @@
+{
+  "title": "LC-15 半马训练",
+  "age": 36,
+  "gender": "MALE",
+  "heightCm": 174,
+  "weightKg": 76,
+  "fitnessLevel": "ADVANCED",
+  "courseTheme": "半马训练 - 半程马拉松备赛，目标2:00完赛",
+  "trainingType": "RUNNING",
+  "durationMinutes": 90,
+  "difficulty": "HARD",
+  "trainingVenue": "OUTDOOR",
+  "availableEquipment": [],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "50 bpm"
+}

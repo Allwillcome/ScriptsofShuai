@@ -1,0 +1,25 @@
+{
+  "title": "全身循环",
+  "age": 29,
+  "gender": "FEMALE",
+  "heightCm": 168,
+  "weightKg": 56,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "全身循环 - 综合体能提升，混合训练",
+  "trainingType": "HYBRID",
+  "durationMinutes": 35,
+  "difficulty": "MODERATE",
+  "trainingVenue": "HOME",
+  "availableEquipment": [],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [
+    "HIIT"
+  ],
+  "avoidedMovements": [
+    "波比跳"
+  ],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "63 bpm"
+}

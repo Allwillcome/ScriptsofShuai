@@ -1,0 +1,24 @@
+{
+  "title": "LC-02 翘臀",
+  "age": 35,
+  "gender": "FEMALE",
+  "heightCm": 162,
+  "weightKg": 58,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "翘臀 - 臀腿增肌训练，塑造臀部线条",
+  "trainingType": "STRENGTH_TRAINING",
+  "durationMinutes": 45,
+  "difficulty": "HARD",
+  "trainingVenue": "GYM",
+  "availableEquipment": [
+    "哑铃",
+    "壶铃"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "62 bpm"
+}

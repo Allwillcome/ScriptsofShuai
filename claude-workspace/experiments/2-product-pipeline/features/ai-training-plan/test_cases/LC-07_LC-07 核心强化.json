@@ -1,0 +1,25 @@
+{
+  "title": "LC-07 核心强化",
+  "age": 33,
+  "gender": "MALE",
+  "heightCm": 172,
+  "weightKg": 70,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "核心强化 - 核心肌群力量训练",
+  "trainingType": "STRENGTH_TRAINING",
+  "durationMinutes": 30,
+  "difficulty": "MODERATE",
+  "trainingVenue": "HOME",
+  "availableEquipment": [
+    "哑铃"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [
+    "平板支撑"
+  ],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "60 bpm"
+}

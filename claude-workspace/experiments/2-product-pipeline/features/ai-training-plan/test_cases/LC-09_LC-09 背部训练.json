@@ -1,0 +1,24 @@
+{
+  "title": "LC-09 背部训练",
+  "age": 38,
+  "gender": "MALE",
+  "heightCm": 175,
+  "weightKg": 78,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "背部训练 - 背部肌肉增肌，手肘有网球肘需注意",
+  "trainingType": "STRENGTH_TRAINING",
+  "durationMinutes": 50,
+  "difficulty": "HARD",
+  "trainingVenue": "GYM",
+  "availableEquipment": [
+    "哑铃",
+    "杠铃"
+  ],
+  "injuryNotes": "手肘",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "58 bpm"
+}

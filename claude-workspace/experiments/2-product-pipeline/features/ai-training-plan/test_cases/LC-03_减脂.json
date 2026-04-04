@@ -1,0 +1,23 @@
+{
+  "title": "减脂",
+  "age": 42,
+  "gender": "MALE",
+  "heightCm": 180,
+  "weightKg": 85,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "减脂 - 有氧减脂训练，目标减重5kg",
+  "trainingType": "CARDIO",
+  "durationMinutes": 30,
+  "difficulty": "HARD",
+  "trainingVenue": "HOME",
+  "availableEquipment": [],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [
+    "波比跳"
+  ],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "70 bpm"
+}

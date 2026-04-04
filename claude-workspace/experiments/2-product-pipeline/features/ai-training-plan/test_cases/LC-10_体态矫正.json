@@ -1,0 +1,23 @@
+{
+  "title": "体态矫正",
+  "age": 50,
+  "gender": "FEMALE",
+  "heightCm": 158,
+  "weightKg": 62,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "体态矫正 - 改善圆肩驼背，适合久坐上班族",
+  "trainingType": "FUNCTIONAL_TRAINING",
+  "durationMinutes": 25,
+  "difficulty": "EASY",
+  "trainingVenue": "HOME",
+  "availableEquipment": [],
+  "injuryNotes": "肩关节,腰部",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [
+    "俯卧撑"
+  ],
+  "trainingReadiness": "一般",
+  "sleepQuality": "睡眠一般",
+  "hrv": "偏低",
+  "restingHeartRate": "68 bpm"
+}

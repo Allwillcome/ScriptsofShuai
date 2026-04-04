@@ -1,0 +1,23 @@
+{
+  "title": "LC-14 划船机训练",
+  "age": 23,
+  "gender": "FEMALE",
+  "heightCm": 170,
+  "weightKg": 55,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "划船机训练 - 心肺能力提升，划船机进阶训练",
+  "trainingType": "CARDIO",
+  "durationMinutes": 40,
+  "difficulty": "MODERATE",
+  "trainingVenue": "GYM",
+  "availableEquipment": [
+    "划船机"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "61 bpm"
+}

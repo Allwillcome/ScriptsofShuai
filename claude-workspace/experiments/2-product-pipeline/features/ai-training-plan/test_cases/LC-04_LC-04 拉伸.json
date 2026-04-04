@@ -1,0 +1,21 @@
+{
+  "title": "LC-04 拉伸",
+  "age": 25,
+  "gender": "FEMALE",
+  "heightCm": 165,
+  "weightKg": 52,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "拉伸 - 腰背柔韧性提升，缓解腰肌劳损",
+  "trainingType": "FLEXIBILITY",
+  "durationMinutes": 20,
+  "difficulty": "EASY",
+  "trainingVenue": "HOME",
+  "availableEquipment": [],
+  "injuryNotes": "腰部",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "一般",
+  "sleepQuality": "睡眠一般",
+  "hrv": "偏低",
+  "restingHeartRate": "68 bpm"
+}

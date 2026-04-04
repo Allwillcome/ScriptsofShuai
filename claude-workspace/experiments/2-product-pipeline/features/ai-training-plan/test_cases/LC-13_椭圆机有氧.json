@@ -1,0 +1,23 @@
+{
+  "title": "椭圆机有氧",
+  "age": 32,
+  "gender": "MALE",
+  "heightCm": 176,
+  "weightKg": 74,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "椭圆机有氧 - 心肺能力提升，椭圆机入门训练",
+  "trainingType": "CARDIO",
+  "durationMinutes": 30,
+  "difficulty": "EASY",
+  "trainingVenue": "GYM",
+  "availableEquipment": [
+    "椭圆机"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "66 bpm"
+}

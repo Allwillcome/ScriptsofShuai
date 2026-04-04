@@ -1,0 +1,24 @@
+{
+  "title": "LC-11 硬拉训练",
+  "age": 27,
+  "gender": "MALE",
+  "heightCm": 182,
+  "weightKg": 82,
+  "fitnessLevel": "ADVANCED",
+  "courseTheme": "硬拉训练 - 下肢力量提升，力量举专项",
+  "trainingType": "STRENGTH_TRAINING",
+  "durationMinutes": 60,
+  "difficulty": "HARD",
+  "trainingVenue": "GYM",
+  "availableEquipment": [
+    "杠铃",
+    "史密斯机"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "52 bpm"
+}

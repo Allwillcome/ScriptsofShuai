@@ -1,0 +1,23 @@
+{
+  "title": "练胸",
+  "age": 28,
+  "gender": "MALE",
+  "heightCm": 175,
+  "weightKg": 72,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "练胸 - 增肌训练，专注胸部肌肉发展",
+  "trainingType": "STRENGTH_TRAINING",
+  "durationMinutes": 30,
+  "difficulty": "MODERATE",
+  "trainingVenue": "HOME",
+  "availableEquipment": [
+    "哑铃"
+  ],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "65 bpm"
+}

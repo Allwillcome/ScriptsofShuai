@@ -1,0 +1,21 @@
+{
+  "title": "瑜伽拉伸",
+  "age": 40,
+  "gender": "FEMALE",
+  "heightCm": 163,
+  "weightKg": 60,
+  "fitnessLevel": "INTERMEDIATE",
+  "courseTheme": "瑜伽拉伸 - 全身柔韧性提升",
+  "trainingType": "FLEXIBILITY",
+  "durationMinutes": 40,
+  "difficulty": "EASY",
+  "trainingVenue": "HOME",
+  "availableEquipment": [],
+  "injuryNotes": "无",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "良好",
+  "sleepQuality": "睡眠良好",
+  "hrv": "正常",
+  "restingHeartRate": "64 bpm"
+}

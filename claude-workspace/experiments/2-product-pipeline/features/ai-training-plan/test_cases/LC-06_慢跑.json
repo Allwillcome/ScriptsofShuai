@@ -1,0 +1,23 @@
+{
+  "title": "慢跑",
+  "age": 45,
+  "gender": "FEMALE",
+  "heightCm": 160,
+  "weightKg": 65,
+  "fitnessLevel": "BEGINNER",
+  "courseTheme": "慢跑 - 5公里跑步训练，心肺能力提升，膝关节有旧伤需注意",
+  "trainingType": "RUNNING",
+  "durationMinutes": 25,
+  "difficulty": "EASY",
+  "trainingVenue": "HOME",
+  "availableEquipment": [
+    "跑步机"
+  ],
+  "injuryNotes": "膝关节",
+  "avoidedTrainingTypes": [],
+  "avoidedMovements": [],
+  "trainingReadiness": "一般",
+  "sleepQuality": "睡眠一般",
+  "hrv": "正常",
+  "restingHeartRate": "72 bpm"
+}
